@@ -10,7 +10,7 @@ class ItemController extends Controller
     public function index()
     {
         $itemList = Item::all();
-        return view('index', compact('itemList'));
+        return view('dashboard', compact('itemList'));
     }
 
     public function create()
@@ -22,7 +22,7 @@ class ItemController extends Controller
     { 
         $validated = $req->validate([
             'name' => 'required|min:5|max:20',
-            'description' => 'required|min:5|max:20',
+            'description' => 'required|min:5|max:105',
             'price'=> 'required|numeric'
         ]);
 
@@ -48,6 +48,12 @@ class ItemController extends Controller
     public function update(Request $req, $id)
     {
         $item = Item::findOrFail($id);
+
+        $validated = $req->validate([
+            'name' => 'required|min:5|max:20',
+            'description' => 'required|min:5|max:105',
+            'price'=> 'required|numeric'
+        ]);
     
         if($req->file('picture')){
             $oldPicturePath = public_path() . '/storage/images/' . $item->picture;

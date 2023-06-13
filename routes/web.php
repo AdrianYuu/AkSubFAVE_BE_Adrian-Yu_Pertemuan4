@@ -21,12 +21,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function(){
-    Route::get('/', [ItemController::class, 'index'])->name('index');
+    Route::get('/', [ItemController::class, 'index'])->name('dashboard');
 });
 
 Route::middleware('auth', 'admin')->group(function(){

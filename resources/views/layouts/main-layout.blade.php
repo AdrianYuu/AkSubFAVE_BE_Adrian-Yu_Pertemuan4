@@ -13,7 +13,7 @@
             <a class="navbar-brand" href="#">Item Management System</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="nav-link active" href="{{ route('index') }}">Item List</a>
                     </li>
                     @if(Auth::user()->is_admin == 1)
@@ -23,7 +23,7 @@
                     @endif
                     <li class="nav-item">
                         <a class="nav-link active" href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
+                    </li> --}}
                 </ul>
             </div>
         </div>
