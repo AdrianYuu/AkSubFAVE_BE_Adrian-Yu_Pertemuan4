@@ -4,56 +4,55 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use App\Http\Resources\ItemResource;
 
-class ItemController extends Controller
+class ItemApiController extends Controller
 {
     public function index()
     {
         $itemList = Item::all();
-        return view('dashboard', compact('itemList'));
+        return ItemResource::collection($itemList);
     }
 
-    public function create()
-    {  
-        return view('add');
+    public function show($id)
+    {
+        $item = Item::findOrFail($id);
+        return new ItemResource($item);
     }
 
     public function store(Request $req)
-    { 
+    {
         $validated = $req->validate([
             'name' => 'required|min:5|max:20',
             'description' => 'required|min:5|max:105',
-            'price'=> 'required|numeric',
-            'picture' => 'required'
+            'price'=> 'required|numeric'
         ]);
 
         $pictureName = $req->file('picture')->getClientOriginalName();
         $req->file('picture')->storeAs('public/images/' . $pictureName);
 
-        Item::create([
+        $item = Item::create([
             'name' => $req->name,
             'description' => $req->description,
             'price' => $req->price,
             'picture' => $pictureName
         ]);
-    
-        return redirect('/');
-    }
 
-    public function edit($id)
-    {
-        $item = Item::findOrFail($id);
-        return view('edit', compact('item'));
+        return new ItemResource($item);
     }
 
     public function update(Request $req, $id)
     {
-        $item = Item::findOrFail($id);
+        $item = Item::find($id);
+
+        if(!$item){
+            return response()->json('ID not found!');
+        }
 
         $validated = $req->validate([
             'name' => 'required|min:5|max:20',
             'description' => 'required|min:5|max:105',
-            'price' => 'required|numeric',
+            'price'=> 'required|numeric'
         ]);
     
         if($req->file('picture')){
@@ -69,8 +68,6 @@ class ItemController extends Controller
                 'price' => $req->price,
                 'picture' => $pictureName,
             ]);
-
-            return redirect('/');
         }
 
         $item->update([
@@ -78,24 +75,23 @@ class ItemController extends Controller
             'description' => $req->description,
             'price' => $req->price,
         ]);
-
-        return redirect('/');
-    }
-    
-    public function delete($id)
-    {
-        $item = Item::findOrFail($id);
-        return view('delete', compact('item'));
+        
+        return new ItemResource($item);
     }
 
     public function destroy($id)
     {
-        $item = Item::findOrFail($id);
+        $item = Item::find($id);
+
+        if(!$item){
+            return response()->json('ID not found!');
+        }
 
         $deletedItemPath = public_path() . '/storage/images/' . $item->picture;
         unlink($deletedItemPath);
 
         Item::destroy($id);
-        return redirect('/');
+
+        return response()->json('Delete Success!');
     }
 }
