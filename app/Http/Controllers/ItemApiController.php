@@ -16,7 +16,12 @@ class ItemApiController extends Controller
 
     public function show($id)
     {
-        $item = Item::findOrFail($id);
+        $item = Item::find($id);
+
+        if(!$item){
+            return response()->json('ID not found!');
+        }
+
         return new ItemResource($item);
     }
 
